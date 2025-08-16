@@ -54,7 +54,7 @@ class YouTubeChannel(Subject):
         self._observers.remove(observer)
 
     def notify(self):
-        print(f"Notifying all subscribers about the new video...")
+        print("Notifying all subscribers about the new video...")
         for observer in self._observers:
             observer.update(f"A new video was uploaded to '{self.name}': {self._latest_video_title}")
 

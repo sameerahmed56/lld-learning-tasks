@@ -5,35 +5,19 @@ import time
 
 
 class Vehicle(ABC):
-
-    @abstractmethod
-    def hourly_price(self):
-        pass
-
-    @abstractmethod
-    def daily_price(self):
-        pass
+    def __init__(self, vehicle_number: str):
+        self.vehicle_number = vehicle_number
 
 
 class CarVehicle(Vehicle):
-
-    def hourly_price(self):
-        return 5
-
-    def daily_price(self):
-        return 100
+    pass
 
 
 class TruckVehicle(Vehicle):
-
-    def hourly_price(self):
-        return 10
-
-    def daily_price(self):
-        return 200
-
+    pass
 
 # -------- PARKING SPOT --------
+
 
 class ParkingSpot(ABC):
 
@@ -91,18 +75,14 @@ class HourlyParkingPricingStrategy(ParkingPricingStrategy):
     def calculate_cost(self, ticket: Ticket):
         duration_seconds = time.time() - ticket.entry_time
         duration_hours = (duration_seconds / 3600) + 1
+        hourly_price = 5  # Default pricing
+        if isinstance(ticket.vehicle, CarVehicle):
+            hourly_price = 5
+        elif isinstance(ticket.vehicle, TruckVehicle):
+            hourly_price = 10
         print(
-            f'Pricing calculated as {duration_hours * ticket.vehicle.hourly_price():.2f} for {duration_hours:.2f} hours')
-        return duration_hours * ticket.vehicle.hourly_price()
-
-
-class DailyParkingPricingStrategy(ParkingPricingStrategy):
-
-    def calculate_cost(self, ticket: Ticket):
-        duration_seconds = time.time() - ticket.entry_time
-        duration_days = (duration_seconds / (60*60*24)) + 1
-        print(f'Pricing calculated as {duration_days * ticket.vehicle.daily_price():.2f} for {duration_days:.2f} days')
-        return duration_days * ticket.vehicle.daily_price()
+            f'Pricing calculated as {duration_hours * hourly_price:.2f} for {duration_hours:.2f} hours')
+        return duration_hours * hourly_price
 
 
 # ------------ Parking Lot ------------
@@ -157,8 +137,8 @@ class ParkingLot:
 
 hourly_strategy = HourlyParkingPricingStrategy()
 parking_lot = ParkingLot(pricing_strategy=hourly_strategy)
-my_car = CarVehicle()
-my_truck = TruckVehicle()
+my_car = CarVehicle('1234')
+my_truck = TruckVehicle('5678')
 car_ticket = parking_lot.park_vehicle(my_car)
 truck_ticket = parking_lot.park_vehicle(my_truck)
 print("\n... vehicles parked for a while ...\n")
